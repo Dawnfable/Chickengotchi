@@ -62,6 +62,7 @@ public class PlayerSettings : MonoBehaviour
 
     public void SetVolume()
     {
+        musicSource.volume = musicVolumeSlider.value;
         PlayerPrefs.SetFloat(MUSIC_VOLUME, musicVolumeSlider.value);
         PlayerPrefs.Save();
     }
