@@ -7,12 +7,15 @@ using UnityEngine;
 public class SaveManager : MonoBehaviour
 {
     public static SaveManager instance;
-    Save toBeSaved { get; set; }
-    Save loadedSave;
+    public Save toBeSaved { get; set; }
+    public Save loadedSave;
 
+    private List<ISavable> savables = new List<ISavable>();
     private void Awake()
     {
         instance = this;
+        savables.Add((ChickenAttributes)FindObjectOfType(typeof(ChickenAttributes)));
+
         loadedSave = Load();
 
         if (loadedSave != null)
@@ -25,14 +28,25 @@ public class SaveManager : MonoBehaviour
         }
     }
 
+    private void OnDestroy()
+    {
+        Save();
+    }
+
     private Save Load()
     {
-        Save loadedSave = null;
-        if (File.Exists(Application.persistentDataPath + "/gamesave.save"))
+        loadedSave = null;
+        string path = Application.persistentDataPath + "/gamesave.save";
+        if (File.Exists(path))
         {
             BinaryFormatter bf = new BinaryFormatter();
-            FileStream file = File.Open(Application.persistentDataPath + "/gamesave.save", FileMode.Open);
-            loadedSave = (Save)bf.Deserialize(file);
+            FileStream file = File.Open(path, FileMode.Open);
+            Debug.Log(path);
+            if (file.Length != 0)
+            {
+                loadedSave = (Save)bf.Deserialize(file);
+                Debug.Log("asdf" + loadedSave.chickenXPosition + loadedSave.chickenYPosition);
+            }
             file.Close();
 
             Debug.Log("Game Loaded");
@@ -41,16 +55,34 @@ public class SaveManager : MonoBehaviour
         {
             Debug.Log("No game saved!");
         }
+        RequestObjectsLoad();
         return loadedSave;
+    }
+
+    private void RequestObjectsLoad()
+    {
+        foreach (ISavable save in savables)
+        {
+            save.Load();
+        }
     }
 
     void Save()
     {
+        RequestObjectsSave();
         BinaryFormatter bf = new BinaryFormatter();
         FileStream file = File.Create(Application.persistentDataPath + "/gamesave.save");
         bf.Serialize(file, toBeSaved);
         file.Close();
 
         Debug.Log("Game Saved");
+    }
+
+    private void RequestObjectsSave()
+    {
+        foreach (ISavable save in savables)
+        {
+            save.Save();
+        }
     }
 }
