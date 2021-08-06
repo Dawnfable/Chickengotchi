@@ -21,18 +21,4 @@ public class ChickenAttributes : MonoBehaviour, ISavable
             gameObject.transform.position = new Vector3(loading.chickenXPosition, loading.chickenYPosition);
         }
     }
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-    
 }

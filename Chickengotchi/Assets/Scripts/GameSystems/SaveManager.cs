@@ -8,7 +8,7 @@ public class SaveManager : MonoBehaviour
 {
     public static SaveManager instance;
     public Save toBeSaved { get; set; }
-    public Save loadedSave;
+    public Save loadedSave { get; set; }
 
     private List<ISavable> savables = new List<ISavable>();
     private void Awake()
